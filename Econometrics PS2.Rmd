@@ -1,3 +1,5 @@
+# Econometrics Problem Set 2
+
 ---
 title: "Econometrics PS2"
 author: "Cheryl Lim"
@@ -74,7 +76,7 @@ stargazer(NicHH2, type = "latex", title = "Descriptive Statistics",
           single.row = TRUE, 
           no.space = TRUE, 
           column.sep.width = "3pt",
-          summary.stat = c("mean", "sd", "min", "max", "n"), header = FALSE)
+          summary.stat = c("mean", "sd", "min", "max", "n"), header = FALSE, out = "summary_statistics.html")
 ```
 
 - On average, households have around 1.3 adult males and 1.6 adult females, with the number of adults varying significantly between households. 
@@ -97,7 +99,7 @@ stargazer(reg1,
           single.row = TRUE, # to put coefficients and standard errors on same line
           no.space = TRUE, # to remove the spaces after each line of coefficients
           column.sep.width = "3pt", # to reduce column width
-          summary = TRUE, header=FALSE, out = "output.tex")
+          summary = TRUE, header=FALSE, out = "lm1_results.html")
 
 ```
 
@@ -124,7 +126,7 @@ stargazer(reg2,
           single.row = TRUE, # to put coefficients and standard errors on same line
           no.space = TRUE, # to remove the spaces after each line of coefficients
           column.sep.width = "3pt", # to reduce column width
-          summary = TRUE, header=FALSE, out = "output.tex")
+          summary = TRUE, header=FALSE, out = "lm2_results.html")
 
 ```
 ```{r message=FALSE, warning=FALSE, include=FALSE}
@@ -142,11 +144,12 @@ The older the head of household, the older the other members of the household: c
 ```{r, fig.align='center', warning=FALSE, echo=FALSE, message=FALSE}
 NicHH1 <- NicHH %>% group_by(headage) %>% summarise(constot = mean(constot))
 
-ggplot(NicHH1, aes(x=headage, y=constot)) +
+headplot <- ggplot(NicHH1, aes(x=headage, y=constot)) +
   geom_point(color = "grey") +
   geom_smooth(size= 1) +
   theme_minimal()+
   labs(title = "Consumption and age of the head of the household")
+ggsave("headplot.png", plot = headplot, width = 6, height = 4, dpi = 300)
 ```
 
 
@@ -169,7 +172,7 @@ stargazer(reg3, reg4,
           header = FALSE,
           column.labels = c("Primary Education", "No Primary Education"),
           covariate.labels = c("Male Adults", "Female Adults", "Age of Head", "Education Level of Head", "Distance to Health Center", "Distance to School"),
-          out = "output.tex")
+          out = "lm3and4_results.html")
 ```
 
 **Results:** 
@@ -196,7 +199,13 @@ logtotcon <- ggplot(NicHH) +
   labs(title = "Log(Total Consumption)")
 
 plot_grid(totcon, logtotcon, align="h")
+ggsave("total consumption.png", plot = totcon, width = 6, height = 4, dpi = 300)
+ggsave("log total consumption.png", plot = logtotcon, width = 6, height = 4, dpi = 300)
 ```
+
+![Total Consumption](tot_cons.png) 
+![Log(Total Consumption)](log_cons.png) 
+
 As seen in the red plot, consumption is highly right-skewed. Thus, taking the logarithm of consumption helps achieve normality because the transformation makes the distribution more symmetric. Moreover, consumption is always greater than 0 in our sample, so using the logarithm does not reduce the sample size.
 
 Taking the logarithm of consumption analysis can facilitate the interpretation of the coefficient, as we are now interested in the effect of a change of one unit of the dependent variable in terms of the percentage change in consumption.
@@ -207,6 +216,3 @@ Taking the logarithm of consumption analysis can facilitate the interpretation o
 
 - `healthkm`: While the dataset can provide insights into the impact of health service distance on consumption, as noted in Q2, this is not the most critical variable for understanding household welfare variations. Additional data on health service accessibility—for instance, distinguishing a 10 km distance by road versus a 5 km walk—or details about available services would provide a deeper and more nuanced analysis.
 
-
-
- 
