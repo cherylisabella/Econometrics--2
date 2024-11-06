@@ -1,108 +1,68 @@
 # Econometrics Problem Set 2
 
----
-title: "Econometrics PS2"
-author: "Cheryl Lim"
-date: "2024-10-23"
-output:
-  pdf_document:
-    latex_engine: xelatex
-    df_print: paged
-geometry: margin = 0.3in
----
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(haven)
-library(dplyr)
-library(ggplot2)
-library(knitr)
-library(stargazer)
-library(labelled)
-library(cowplot)
-
-NicHH <- read_dta("nichh.dta", encoding="utf-8")
-```
-
 ## Exercise 1
 You want to analyze the optimal use of your time investment as a graduate student. You distribute a survey among a random sample of recently graduated students, and ask their time allocation during graduate school. You have a question indicating average grades, the number of hours per week for study, the number of hours per week for sleep, and the number of hours per week for all other activities. You estimate the regression:
 
-\begin{center} $log(grades)=\beta_0+\beta_1study+\beta_2sleep+u$ \end{center}
+ $log(grades)=\beta_0+\beta_1study+\beta_2sleep+u$ 
 
-**1a. Variable analysis: ** The reason for not including the number of hours of other activities is because they are implicitly included in the other variables for sleeping and studying hours. The total time per week is fixed (168 hours) - including them as a separate variable would introduce multicollinearity, and make it impossible to estimate the coefficients correctly.
+**1a. Variable analysis:** 
 
-**1b. Interpretation of estimate for β2 (~0.01): ** Interpretation of $\beta_2 = 0.01$: Cetrus paribus, an additional hour of sleep is associated with a 1 percent increase in a student's grades.
+The reason for not including the number of hours of other activities is because they are implicitly included in the other variables for sleeping and studying hours. The total time per week is fixed (168 hours) - including them as a separate variable would introduce multicollinearity, and make it impossible to estimate the coefficients correctly.
 
-**1c. A variable that is likely included in u and that could cause a violation of the zero conditional mean assumption: ** 
+**1b. Interpretation of estimate for β2 (~0.01):** 
+
+Interpretation of $\beta_2 = 0.01$: Cetrus paribus, an additional hour of sleep is associated with a 1 percent increase in a student's grades.
+
+**1c. A variable that is likely included in u and that could cause a violation of the zero conditional mean assumption:** 
 
 - $student's\ ability:$ If more able students tend to study less but still achieve high grades, the estimate of $\beta_1$ might be *biased downward* because the model would attribute their high performance to fewer hours of study when, in fact, they're doing well due to their ability.
 - $sleep:$ It is not obvious how ability influences it, but we could hypothesize that more able students manage their time better, so they might sleep more. This would mean that $\beta_2$ is *biased upward*, inaccurately suggesting that more sleep is associated with higher grades when, in reality, it's the student's ability that allows them to sleep more and still perform well.
 - $motivation:$ Higher motivation likely leads to more hours of study and potentially higher grades, causing an *upward bias* in the estimates of $\beta_1$ and $\beta_2$.
 
-
 ## Exercise 2
 For your job as a policy advisor, you need to come up with the best possible estimate of a parameter $\beta$ by searching the literature. You find one study with an unbiased estimate of $\beta = 5.0$, with estimated variance of $\beta = 8.0$, from a regression with an $R^2=0.86$. Another study uses another dataset and finds an unbiased estimate of $\beta=6.0$ with estimate variance of $\beta = 4.0$, from a regression with a $R^2=0.43$.
 
-**2a. Comparison of estimates: ** Since the goal is to come up with the best possible estimate of $\beta$, the estimate with variance of 4.0 would be preferred since it’s lower variance indicates that the estimate is more precise
+**2a. Comparison of estimates:** 
+Since the goal is to come up with the best possible estimate of $\beta$, the estimate with variance of 4.0 would be preferred since it’s lower variance indicates that the estimate is more precise
 
-**2b. Improvement of estimates: ** Given access to the two datasets, we could use the weighted average of the two estimates:
+**2b. Improvement of estimates:** 
 
-\begin{center} 
+Given access to the two datasets, we could use the weighted average of the two estimates:
+
 $\hat{\beta} = \frac{\frac{\beta_1}{Var(\beta_1)}+\frac{\beta_2}{Var(\beta_2)}}{\frac{1}{Var(\beta_1)}+\frac{1}{Var(\beta_2)}} = \frac{\frac{5}{8}+\frac{6}{4}}{\frac{1}{8}+\frac{1}{4}} \approx 5.67$ 
-\end{center}
+
 
 
 ## Exercise 3
 Imagine you want to analyze whether people who were affected by hurricane Maria in Puerto Rico are more likely to favor the Democratic party rather than the Republican political party. You have data on 1000 households and know whether their property was on the path of the hurricane. Meteorologists have told you that the path of hurricane Maria was unpredictable, and also not related to the path of other hurricanes. You also know the amount of $ people spent after the hurricane to fix their damaged houses, and whether they get any help from the government for doing so. 
 
-**3a. Commentary on the inclusion of variable for the $ people spent to reconstruct their house: **
+**3a. Commentary on the inclusion of variable for the $ people spent to reconstruct their house:**
+
 Including a variable for the $ people spent to reconstruct their house has some problems associated with it. For one, the amount of money spent on reconstruction may be endogenously determined, since it may be affected by unobserved factors not in the model that are also correlated with political preferences. E.g. households with more money are able to spend more money on reconstruction, and people with more money are usually aligned with a certain political party. In this way, omitted variable bias could be an issue if there are factors not included in the analysis that affect both the amount of money spent on reconstruction and also political party alignment. At first glance, the amount of money spent on reconstruction could be used as a measure of the extent of damage due to the hurricane, but as is established in the question, the hurricane path is random and unpredictable, meaning that the extent of the hurricane damage should not be correlated with political alignment (as it would likely be if we used the amount of money spent on reconstruction as a variable, which is likely correlated with political alignment). As such, it may not be prudent to include the amount of money spent on reconstruction as it could likely lead to bias and endogeneity.
 
-**3b. Commentary on inclusion of a variable indicating the $ amount received from the government as help: ** Whether it would be a good or bad idea to include a variable indicating the $ amount received from the government as help depends on the context and objective of the analysis. On the one hand, if a household's political alignment is affected by receiving government aid (which it could likely be), it would be important to control for this if we were interested in quantifying the whole effect of the hurricane only. In this way, if we include the government help variable, then we are analyzing the effect of the hurricane on political alignment while controlling for government assistance, and thus not studying the total effect of the hurricane on political alignment. Government help is a consequence of the hurricane itself, so if we are interested in the whole effect of the hurricane on political alignment, controlling the government help may not be a good idea since it would not include the effects on political alignment through the conduit of government aid (which is a result of the hurricane itself). Moreover, there could also be issues of endogeneity and selection bias, since government help may be systematically more focused on certain types of households, which could then also be correlated with political preferences. E.g. if households with more/less money or in certain neighbourhoods get more aid the amount of money that a household has is also correlated with political alignment.
+**3b. Commentary on inclusion of a variable indicating the $ amount received from the government as help:** 
+
+Whether it would be a good or bad idea to include a variable indicating the $ amount received from the government as help depends on the context and objective of the analysis. On the one hand, if a household's political alignment is affected by receiving government aid (which it could likely be), it would be important to control for this if we were interested in quantifying the whole effect of the hurricane only. In this way, if we include the government help variable, then we are analyzing the effect of the hurricane on political alignment while controlling for government assistance, and thus not studying the total effect of the hurricane on political alignment. Government help is a consequence of the hurricane itself, so if we are interested in the whole effect of the hurricane on political alignment, controlling the government help may not be a good idea since it would not include the effects on political alignment through the conduit of government aid (which is a result of the hurricane itself). Moreover, there could also be issues of endogeneity and selection bias, since government help may be systematically more focused on certain types of households, which could then also be correlated with political preferences. E.g. if households with more/less money or in certain neighbourhoods get more aid the amount of money that a household has is also correlated with political alignment.
 
 
 ## Computer Exercise
 The dataset nichh.dta contains data from 582 households in Nicaragua. It is a subset of the 1998 Living Standard Measurement Survey (LSMS). We want to analyze this data to understand the returns to different household assets (number of male and female adults, education and age of the household head, and total land owned) and the role of isolation (measured as the distance to school, and the distance to a health centre).  We will use total household consumption, expressed in Cordobas, as a measure of household welfare. 
 
 
-**1. Summary statistics**
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-NicHH2 <- as.data.frame(NicHH)
-
-labels <- sapply(NicHH2, function(x) var_label(x))
-colnames(NicHH2) <- ifelse(!is.na(labels), labels, colnames(NicHH2))
-
-stargazer(NicHH2, type = "latex", title = "Descriptive Statistics", 
-          single.row = TRUE, 
-          no.space = TRUE, 
-          column.sep.width = "3pt",
-          summary.stat = c("mean", "sd", "min", "max", "n"), header = FALSE, out = "summary_statistics.html")
-```
+**1. Summary statistics:**
 
 - On average, households have around 1.3 adult males and 1.6 adult females, with the number of adults varying significantly between households. 
 - Education levels vary, with an average of 5.6 years of schooling. 
 - Total consumption averages 34,596.9 Cordobas, but with substantial variation, reflecting wide disparities in household welfare. 
 - We observe the same disparities for land ownership, where the mean is equal to 3 330ha and the maximum is 423000 ha. 
 
-**2. Specification of model that allows for increasing returns to household assets**
+**2. Specification of model that allows for increasing returns to household assets:**
 
 A model that allows for increasing returns to household assets could be the log-linear model, where we regresses the log of the consumption of the household on the different household assets. 
-$$
-log(constot_i) = \beta_0 + \beta_1\times adultm_i + \beta_2\times adultf_i +  \beta_3\times headage_1 + \beta_4\times headeduc_i + \beta_5 healthkm_i + u
-$$
+$log(constot_i) = \beta_0 + \beta_1\times adultm_i + \beta_2\times adultf_i +  \beta_3\times headage_1 + \beta_4\times headeduc_i + \beta_5 healthkm_i + u$
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
-reg1 <- lm(log(constot) ~ adultm + adultf + headage + headeduc + healthkm  + schoolkm, data = NicHH)
-
-stargazer(reg1, 
-          single.row = TRUE, # to put coefficients and standard errors on same line
-          no.space = TRUE, # to remove the spaces after each line of coefficients
-          column.sep.width = "3pt", # to reduce column width
-          summary = TRUE, header=FALSE, out = "lm1_results.html")
-
-```
-
+![Regression 1 Results](lm1_results.html)
 
 **Interpretation of coefficients:**
 
@@ -115,64 +75,26 @@ stargazer(reg1,
 In our sample, only the composition of the household appears to be strongly related to household consumption.
 
 
-**3. Minimum significance level needed to reject hypothesis that age of household head does not affect total household consumption**
+**3. Minimum significance level needed to reject hypothesis that age of household head does not affect total household consumption:**
 
 We first isolate the relation between headage and hh consumption : 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
-reg2 <- lm(constot ~ headage, data = NicHH)
-
-stargazer(reg2,           
-          single.row = TRUE, # to put coefficients and standard errors on same line
-          no.space = TRUE, # to remove the spaces after each line of coefficients
-          column.sep.width = "3pt", # to reduce column width
-          summary = TRUE, header=FALSE, out = "lm2_results.html")
-
-```
-```{r message=FALSE, warning=FALSE, include=FALSE}
-P_Value <- summary(reg2)$coefficients["headage", "Pr(>|t|)"]
-P_Value
-```
-
-Since the p-value for the estimate of the relation between hh consumption and age equals `r P_Value`, we can reject the null hypothesis that the age of the household head has no effect on consumption at the `r round(P_Value, digits = 3)*100` level, which is below the standard significance level of 5%.
+![Regression 2 Results](lm2_results.html)
 
 
-**4. Analysis of hypothesis that household consumption would start declining after a household head has reached a certain threshold age**
+Since the p-value for the estimate of the relation between hh consumption and age equals 0.0484789,, we can reject the null hypothesis that the age of the household head has no effect on consumption at the 4.8 level, which is below the standard significance level of 5%.
+
+
+**4. Analysis of hypothesis that household consumption would start declining after a household head has reached a certain threshold age:**
 
 The older the head of household, the older the other members of the household: children may grow up and leave the household. This can lead to an overall decline in consumption. Graphically, we represent consumption on the age of the household head in grey. In blue, we plot the average consumption of the household for each age. Overall, it starts trending downwards from the age of ~55. 
 
-```{r, fig.align='center', warning=FALSE, echo=FALSE, message=FALSE}
-NicHH1 <- NicHH %>% group_by(headage) %>% summarise(constot = mean(constot))
 
-ggplot(NicHH1, aes(x=headage, y=constot)) +
-  geom_point(color = "grey") +
-  geom_smooth(size= 1) +
-  theme_minimal()+
-  labs(title = "Consumption and age of the head of the household")
-```
+![Consumption and age of the head of the household](headplot.png)
 
+**5. Estimation of model from qn 2 - household heads with at least primary school completed (i.e. 6 years of schooling or more) versus all others:**
 
-**5. Estimation of model from qn 2 - household heads with at least primary school completed (i.e. 6 years of schooling or more) versus all others**
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-NicHH_primary <- NicHH %>% filter(headeduc >= 6)
-NicHH_no_primary <- NicHH %>% filter(headeduc < 6)
-
-reg3 <- lm(constot ~ adultm + adultf + headage + headeduc + healthkm  + schoolkm, data = NicHH_primary)
-
-reg4 <- lm(constot ~ adultm + adultf + headage + headeduc + healthkm  + schoolkm, data = NicHH_no_primary)
-
-stargazer(reg3, reg4,
-          title = "Impact of Education Level of Head on Household Consumption",
-          type = "latex", 
-          single.row = TRUE,
-          no.space = TRUE,
-          column.sep.width = "3pt",
-          header = FALSE,
-          column.labels = c("Primary Education", "No Primary Education"),
-          covariate.labels = c("Male Adults", "Female Adults", "Age of Head", "Education Level of Head", "Distance to Health Center", "Distance to School"),
-          out = "lm3and4_results.html")
-```
+![Regression 2 Results](lm3and4_results.html)
 
 **Results:** 
 
@@ -180,34 +102,17 @@ stargazer(reg3, reg4,
 
 - The variables do not tell us anything about women's labour; we can therefore imagine that, for instance, having more women in the household allows educated men to "focus" more on their jobs and, therefore, earn more money. In this way, women's impact on consumption would come through men's labour.
 
-**6. Alternatives to using either household consumption or log(household consumption) as dependent variables**
+**6. Alternatives to using either household consumption or log(household consumption) as dependent variables:**
 
-```{r echo=FALSE, results='asis', fig.align='center'}
+![Total Consumption](total_consumption.png) 
 
-NicHH <- NicHH %>%
-  mutate (logcons = log(constot))
+![Log(Total Consumption)](log_total_consumption.png) 
 
-totcon <- ggplot(NicHH) +
-  geom_density(aes(x = constot), color = "red") +
-  theme_minimal()+
-  labs(title = "Total Consumption")
+As seen in the red plot (`total consumption`), consumption is highly right-skewed. Thus, taking the logarithm of consumption helps achieve normality because the transformation makes the distribution more symmetric. Moreover, consumption is always greater than 0 in our sample, so using the logarithm does not reduce the sample size.
 
-logtotcon <- ggplot(NicHH) +
-    geom_density(aes(x = logcons), color = "blue") +
-  theme_minimal() +
-  labs(title = "Log(Total Consumption)")
+Taking the logarithm of consumption (blue plot) analysis can facilitate the interpretation of the coefficient, as we are now interested in the effect of a change of one unit of the dependent variable in terms of the percentage change in consumption.
 
-plot_grid(totcon, logtotcon, align="h")
-```
-
-![Total Consumption](tot_cons.png) 
-![Log(Total Consumption)](log_cons.png) 
-
-As seen in the red plot, consumption is highly right-skewed. Thus, taking the logarithm of consumption helps achieve normality because the transformation makes the distribution more symmetric. Moreover, consumption is always greater than 0 in our sample, so using the logarithm does not reduce the sample size.
-
-Taking the logarithm of consumption analysis can facilitate the interpretation of the coefficient, as we are now interested in the effect of a change of one unit of the dependent variable in terms of the percentage change in consumption.
-
-**7. Impact of distance to school and health services on households’ welfare **
+**7. Impact of distance to school and health services on households’ welfare:**
 
 - `schoolkm`: The dataset did not consider household composition when analyzing the impact of distance to schools and health services on household welfare. Household composition (e.g., the number of children) is essential for understanding how distance influences welfare, as different households have varying needs. To draw more meaningful conclusions, creating subgroups based on household composition would help better isolate the effects of distance on welfare.
 
